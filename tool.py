@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import os
 
 import SimpleITK as sitk
@@ -5,16 +8,14 @@ import nibabel as nib
 import numpy as np
 import pandas as pd
 import radiomics
-from qmenta.imaging_utils.file_system import mkdirs
 from radiomics import featureextractor
 
 
 def run(context):
 
-    project_dir = os.environ.get('MINTEXE_PATH', os.path.expandvars('$HOME'))
     input_dir = os.path.join('/root', 'INPUT')
     output_dir = os.path.join('/root', 'OUTPUT')
-    mkdirs(output_dir)
+    os.mkdir(output_dir)
     context.set_progress(value=0, message="Processing")
 
     # Retrieve files and settings
@@ -37,8 +38,6 @@ def run(context):
         if image_filter == 'LoG':
             extractor.settings['sigma'] = [settings['sigma_LoG']]
             extractor.settings['binWidth'] = settings['fwidth_LoG']
-
-    writer = pd.ExcelWriter(os.path.join(output_dir, 'radiomic_features.xlsx'), engine='xlsxwriter')
 
     # Initialize all necessary dataframes and dicts
 
@@ -83,7 +82,7 @@ def run(context):
 
         features = extractor.execute(anat_img, label_sitk)
 
-        for key, value in features.iteritems():
+        for key, value in features.items():
             if "original" in key:
                 original_rds_dict[key] = [value]
             if "HHH" in key:

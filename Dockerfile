@@ -1,8 +1,10 @@
 # Start from the following base image
 
-FROM qmentasdk/minimalpy2:latest
+FROM qmentasdk/minimal:latest
 
-COPY /home/guillem/dev/qmenta-sdk-tool-tutorial/tool.py /root/tool.py
+COPY tool.py /root/tool.py
 
-# Execute some commands
-RUN pip install SimpleITK, nibabel, numpy, pandas, radiomics, radiomics
+RUN pip install SimpleITK nibabel numpy pandas
+
+RUN python -m pip install pyradiomics
+
