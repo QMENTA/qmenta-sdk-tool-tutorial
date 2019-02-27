@@ -6,7 +6,7 @@
 
 ## Introduction
 
-The main purpose of this tutorial is to provide a guide of how to deploy a custom tool into [QMENTA platform](https://client.qmenta.com/#/login) following the procedure step-by-step.
+The main purpose of this tutorial is to provide a guide explaining how to deploy a custom tool into [QMENTA platform](https://client.qmenta.com/#/login) following the procedure step-by-step.
 
 To get more detailed and technical information about the QMENTA sdk and its capabilities, please refer to it's [documentation](https://docs.qmenta.com/sdk/).
 
@@ -74,7 +74,7 @@ A list of QMENTA's public docker containers can be found at the [qmentasdk docke
 
 > **Tip**: Prior to this step, we recommend testing that the container was properly build by locally running the tool. To learn how to do so, check the [Testing tools on your computer](https://docs.qmenta.com/sdk/testing.html) section in the QMENTA sdk documentation.
 
-To follow this step you will need to have an account in the [QMENTA platform](https://client.qmenta.com/#/login) and have the hability to deploy tools enabled.
+To follow this step you will need to have an account in the [QMENTA platform](https://client.qmenta.com/#/login) and have the ability to deploy tools enabled.
 
 * Log in to the platform and acces the **Analysis menu**. Then, click on **My tools** and select **add a new tool**.
 
@@ -101,13 +101,14 @@ To follow this step you will need to have an account in the [QMENTA platform](ht
 
 
 * Add settings
-    * Go to the **settings** tab and click on _edit_
-    
+    * Go to the **settings** tab and click on _Editor_
+   
     <img src="assets/add_tool3.png" style="width: 50%">
-    
+   
     * Use the examples on the right screen to define the settings that your tool needs. This includes input containers and parameters of the tool. In this repository you can take a look at the settings implemented in the _settings.json_ file.
     
     <img src="assets/add_tool4.png" style="width: 50%">
+    
     
 * Add a description
     * This texts is going to be displayed when running the tool from the platform.
@@ -117,3 +118,14 @@ To follow this step you will need to have an account in the [QMENTA platform](ht
 ---
 
 ## Running the tool
+
+After the completion of the three steps the tool is ready to be run from the platform.
+
+To do so, you can go to **My Data** in the platform, select a subject that contains the necessary files to run the tool (and properly tagged) and click on **Start Analysis**. Then select your tool, choose the parameters you want it to run with and optionally add a name and a description to the analysis. Click on **Start analysis** when you are happy with the configuration.
+ 
+ 
+ <img src="assets/run_tool.png" style="width: 50%">
+ 
+ The platform will run the analysis and send an email whenever it finishes. Then, you can retrieve the results by going to **My Analysis**, selecting the finished analysis, and then click on **Result files** inside the Results tab.
+ 
+  <img src="assets/results.png" style="width: 50%">
