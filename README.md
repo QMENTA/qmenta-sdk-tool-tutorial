@@ -6,41 +6,46 @@
 
 ## Introduction
 
-The main purpose of this tutorial is to provide a guide explaining how to deploy a custom tool into [QMENTA platform](https://client.qmenta.com/#/login) following the procedure step-by-step.
+The main purpose of this repository is to provide a guide explaining how to deploy a custom based on the QMENTA SDK into [QMENTA platform](https://client.qmenta.com/#/login) following the procedure step-by-step.
 
-To get more detailed and technical information about the QMENTA sdk and its capabilities, please refer to it's [documentation](https://docs.qmenta.com/sdk/).
+To get more detailed and technical information about the QMENTA SDK and its capabilities, please refer to it's [documentation](https://docs.qmenta.com/sdk/).
 
-As a case study, we will implement a tool that takes as inputs an oncology medical image and a segmentation mask with one or more labels, and then it uses the [Pyradiomics library](https://pyradiomics.readthedocs.io/en/latest/index.html). 
+As a case study, we will implement a tool that takes as inputs an oncology medical image and a segmentation mask with one or more labels, and then it uses the [Pyradiomics library](https://pyradiomics.readthedocs.io/en/latest/index.html) to extract radiomic features from the data. 
 The tool will allow the user to select which classes of radiomic features wants to compute and also select.
+
+The deployment of a tool has three principal steps:
+* Write the main script
+* Build a docker container with the appropriate environment for the tool to run.
+* Add the tool to QMENTA platform. 
 
 ---
 
 ## Step 1: Write the main script
 
-The first step consists of writing the python code that will carry out the desired processing of the input files. In this repository you'll find the implemented script in the file named *tool.py*. The tool is commented in detail so it's easy to follow up.
+The first step consists of writing the python code that will carry out the desired processing of the input files. In this repository you'll find the implemented script in the file named [*tool.py*](https://github.com/qmentasdk/qmenta-sdk-tool-tutorial/blob/master/tool.py). The tool is commented in detail so it's easy to follow up.
 
-The script uses methods of the AnalysisContext class from the QMENTA sdk to interact with the platform and perform the following actions:
+The script uses methods of the AnalysisContext class from the QMENTA SDK to interact with the platform and perform the following actions:
 
 * Download the input data to the container using `context.get_files()`
 * Retrieve the settings defined for the analysis using `context.get_settings()`
-* Set the progress status for monitoring from the platform using `context.set_progress()`
+* Set the progress status to monitor the analysis from the platform using `context.set_progress()`
 * Upload the result files from the container to the platform using `context.upload_file()`
 
-## Step 2: Build the container where the tool will run
+## Step 2: Build the docker container where the tool will run
 
-To carry out this step two requirements must be fulfilled: have docker installed ([guide](https://docs.docker.com/install/)) and have a docker registry, we recommend using [docker hub](https://hub.docker.com/) for its integration with Docker when uploading images.
+To follow through this step two requirements must be fulfilled: have Docker installed ([how to](https://docs.docker.com/install/)) and have a docker registry, we recommend using [docker hub](https://hub.docker.com/) for its integration with Docker when uploading images.
 
 
 In this example we build the docker container using a Dockerfile. The one we used is included in this repository:
 
 ```Dockerfile
-# Start from a QMENTA public container containing python 3, qmenta-sdk library and a cofigured entrypoint.
+# Start from a QMENTA public container containing python 3, qmenta-sdk library and a configured entrypoint.
 FROM qmentasdk/minimal:latest
 
-#Copy the tool script to the container
+#Copy the tool script to the container.
 COPY tool.py /root/tool.py
 
-# Install all the python libraries that the tool requires
+# Install all the required libraries and tools (in this case only python libraries are needed).
 RUN pip install SimpleITK nibabel numpy pandas
 RUN python -m pip install pyradiomics 
 ```
@@ -62,7 +67,7 @@ To build the container, we open a terminal window and run the following commands
     `>> docker login`
     
     This will ask for the username and the password.
-* Push the container to the docker registry
+* Save the container in the docker registry
     
     `docker push qmentasdk/radiomics_tool:1.0`
  
@@ -74,13 +79,13 @@ A list of QMENTA's public docker containers can be found at the [qmentasdk docke
 
 > **Tip**: Prior to this step, we recommend testing that the container was properly build by locally running the tool. To learn how to do so, check the [Testing tools on your computer](https://docs.qmenta.com/sdk/testing.html) section in the QMENTA sdk documentation.
 
-To follow this step you will need to have an account in the [QMENTA platform](https://client.qmenta.com/#/login) and have the ability to deploy tools enabled.
+To follow this step you will need to have an account in [QMENTA platform](https://client.qmenta.com/#/login) and have the ability to deploy tools enabled.
 
-* Log in to the platform and acces the **Analysis menu**. Then, click on **My tools** and select **add a new tool**.
+* Log in to the platform and acces the **My Analysis** menu. Then, click on **My tools** and select **New tool**.<br/>
 
-<img src="assets/add_tool1.png" style="width: 50%">
+<img src="assets/add_tool1.png" style="width: 50%"> <br/>
 
-* Fill all the fields with the information about your tool
+* Fill all the fields with the information about your tool.<br/>
 
 <img src="assets/add_tool2.png" style="width: 50%">
 
@@ -101,18 +106,18 @@ To follow this step you will need to have an account in the [QMENTA platform](ht
 
 
 * Add settings
-    * Go to the **settings** tab and click on _Editor_
-   
-    <img src="assets/add_tool3.png" style="width: 50%">
-   
-    * Use the examples on the right screen to define the settings that your tool needs. This includes input containers and parameters of the tool. In this repository you can take a look at the settings implemented in the _settings.json_ file.
+    * Go to the **settings** tab and click on _Editor_.<br/>
+    
+    <img src="assets/add_tool3.png" style="width: 50%"> <br/>
+    
+    * Use the examples on the right screen to define the settings that your tool needs. This includes input containers and parameters of the tool. In this repository you can take a look at the settings implemented in the [_settings.json_](https://github.com/qmentasdk/qmenta-sdk-tool-tutorial/blob/master/settings.json) file.<br/>
     
     <img src="assets/add_tool4.png" style="width: 50%">
     
     
 * Add a description
-    * This texts is going to be displayed when running the tool from the platform.
-    
+    * This texts is going to be displayed when running the tool from the platform.<br/>
+
     <img src="assets/add_tool5.png" style="width: 50%">
     
 ---
@@ -124,8 +129,8 @@ After the completion of the three steps the tool is ready to be run from the pla
 To do so, you can go to **My Data** in the platform, select a subject that contains the necessary files to run the tool (and properly tagged) and click on **Start Analysis**. Then select your tool, choose the parameters you want it to run with and optionally add a name and a description to the analysis. Click on **Start analysis** when you are happy with the configuration.
  
  
- <img src="assets/run_tool.png" style="width: 50%">
- 
+ <img src="assets/run_tool.png" style="width: 50%"> <br/>
+
  The platform will run the analysis and send an email whenever it finishes. Then, you can retrieve the results by going to **My Analysis**, selecting the finished analysis, and then click on **Result files** inside the Results tab.
  
   <img src="assets/results.png" style="width: 50%">
