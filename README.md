@@ -110,13 +110,13 @@ To follow this step you will need to have an account in [QMENTA platform](https:
     
     <img src="assets/add_tool3.png" style="width: 50%"> <br/>
     
-    * Use the examples on the right screen to define the settings that your tool needs. This includes input containers and parameters of the tool. In this repository you can take a look at the settings implemented in the [_settings.json_](https://github.com/qmentasdk/qmenta-sdk-tool-tutorial/blob/master/settings.json) file.<br/>
+    * Use the examples on the right screen to define the settings that your tool needs. This includes input containers and parameters of the tool. In this repository you can take a look at the settings implemented in the [_settings.json_](https://github.com/qmentasdk/qmenta-sdk-tool-tutorial/blob/master/settings.json) file. <br/>
     
     <img src="assets/add_tool4.png" style="width: 50%">
     
     
 * Add a description
-    * This texts is going to be displayed when running the tool from the platform.<br/>
+    * This texts is going to be displayed when running the tool from the platform. <br/>
 
     <img src="assets/add_tool5.png" style="width: 50%">
     
@@ -126,7 +126,7 @@ To follow this step you will need to have an account in [QMENTA platform](https:
 
 After the completion of the three steps the tool is ready to be run from the platform.
 
-To do so, you can go to **My Data** in the platform, select a subject that contains the necessary files to run the tool (and properly tagged) and click on **Start Analysis**. Then select your tool, choose the parameters you want it to run with and optionally add a name and a description to the analysis. Click on **Start analysis** when you are happy with the configuration.
+To do so, you can go to **My Data** in the platform, select a subject that contains the necessary files to run the tool (properly tagged) and click on **Start Analysis**. Then select your tool, choose the parameters you want it to run with and optionally add a name and a description to the analysis. Click on **Start Analysis** when the configuration is ready.
  
  
  <img src="assets/run_tool.png" style="width: 50%"> <br/>
