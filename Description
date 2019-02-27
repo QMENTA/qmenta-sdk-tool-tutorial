@@ -1,0 +1,2 @@
+This tool takes a 3D oncology medical image and a mask with one or more labels and extracts a series of radiomics features using the PyRadiomics library. The user can specify which radiomic classes want to compute and also optionally apply filters to the original image. The computed radiomic features for each label  and image (when the use of filters is selected) are outputted in a csv file.
+

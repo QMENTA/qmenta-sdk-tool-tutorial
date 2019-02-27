@@ -39,10 +39,6 @@
     "content": "Radiomic feature classes"
   },
   {
-    "type": "info",
-    "content": "For more information about de different classes of features check the <a href='https://pyradiomics.readthedocs.io/en/latest/features.html'>PyRadiomics documentation</a>."
-  },
-  {
     "type": "multiple_choice",
     "id": "feature_classes",
     "title": "Feature classes",
@@ -86,10 +82,6 @@
   {
     "type": "heading",
     "content": "Image filters"
-  },
-  {
-    "type": "info",
-    "content": "For more information about de available image filters check the <a href='https://pyradiomics.readthedocs.io/en/latest/customization.html#image-types'>PyRadiomics documentation</a>."
   },
   {
     "type": "multiple_choice",

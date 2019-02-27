@@ -34,7 +34,7 @@ To carry out this step two requirements must be fulfilled: have docker installed
 In this example we build the docker container using a Dockerfile. The one we used is included in this repository:
 
 ```Dockerfile
-# Start from a public container from QMENTA containing python 3, qmenta-sdk library and a cofigured entrypoint.
+# Start from a QMENTA public container containing python 3, qmenta-sdk library and a cofigured entrypoint.
 FROM qmentasdk/minimal:latest
 
 #Copy the tool script to the container
@@ -80,3 +80,40 @@ To follow this step you will need to have an account in the [QMENTA platform](ht
 
 <img src="assets/add_tool1.png" style="width: 50%">
 
+* Fill all the fields with the information about your tool
+
+<img src="assets/add_tool2.png" style="width: 50%">
+
+* Field description
+    * **Name**: the full name of your tool.
+    * **Short Name**: a short version of the name of the tool.
+    * **Analysis Code**: the tool ID (without spaces or special characters).
+    * **Version**: your version identifier.
+    * **Repository URL**: the registry where your image is stored (hub.docker.com)
+    * **Repository User**: username of the registry.
+    * **Repository Password**: your registry password.
+    * **Image Name**: the full image name (username/tool_name:version).
+    * **Entry Point**: the sequence of commands run at start-up. See Extending the Entry Point for more information.
+    * **Tool Path**: the function name and method of the tool python script (tool:run).
+    * **Num. of cores**: the number of CPU cores allocated to the tool.
+    * **RAM limit in GB**: the amount of memory allocated to the tool.
+    * **User List (optional**): the usernames of the users you want to share the tool with.
+
+
+* Add settings
+    * Go to the **settings** tab and click on _edit_
+    
+    <img src="assets/add_tool3.png" style="width: 50%">
+    
+    * Use the examples on the right screen to define the settings that your tool needs. This includes input containers and parameters of the tool. In this repository you can take a look at the settings implemented in the _settings.json_ file.
+    
+    <img src="assets/add_tool4.png" style="width: 50%">
+    
+* Add a description
+    * This texts is going to be displayed when running the tool from the platform.
+    
+    <img src="assets/add_tool5.png" style="width: 50%">
+    
+---
+
+## Running the tool
