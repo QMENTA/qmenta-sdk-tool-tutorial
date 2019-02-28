@@ -6,7 +6,7 @@
 
 ## Introduction
 
-The main purpose of this repository is to provide a guide explaining how to deploy a custom based on the QMENTA SDK into [QMENTA platform](https://client.qmenta.com/#/login) following the procedure step-by-step.
+The main purpose of this repository is to provide a guide explaining how to deploy a custom tool based on the QMENTA SDK into [QMENTA platform](https://client.qmenta.com/#/login) following the procedure step-by-step.
 
 To get more detailed and technical information about the QMENTA SDK and its capabilities, please refer to it's [documentation](https://docs.qmenta.com/sdk/).
 
