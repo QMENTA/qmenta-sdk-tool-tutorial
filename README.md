@@ -69,7 +69,7 @@ To build the container, we open a terminal window and run the following commands
     This will ask for the username and the password.
 * Save the container in the docker registry
     
-    `docker push qmentasdk/radiomics_tool:1.0`
+    `>> docker push qmentasdk/radiomics_tool:1.0`
  
 More information about working with docker containers in the [QMENTA skd documentation](https://docs.qmenta.com/sdk/develop_images.html#using-a-dockerfile).
 
