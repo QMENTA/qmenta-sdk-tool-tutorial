@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+from collections import namedtuple
 import os
 
 import SimpleITK as sitk
@@ -49,23 +49,12 @@ def run(context):
     original_rds_df = pd.DataFrame()
     original_rds_dict = {}
 
+    wavelet_names = ['HHH', 'HHL', 'HLH', 'HLL', 'LHH', 'LHL', 'LLH', 'LLL']
+    Wavelet = namedtuple('Wavelet', 'df dict')
     if "Wavelet" in settings['image_filters']:
-        wavelet_HHH_rds_df = pd.DataFrame()
-        wavelet_HHH_rds_dict = {}
-        wavelet_HHL_rds_df = pd.DataFrame()
-        wavelet_HHL_rds_dict = {}
-        wavelet_HLH_rds_df = pd.DataFrame()
-        wavelet_HLH_rds_dict = {}
-        wavelet_HLL_rds_df = pd.DataFrame()
-        wavelet_HLL_rds_dict = {}
-        wavelet_LHH_rds_df = pd.DataFrame()
-        wavelet_LHH_rds_dict = {}
-        wavelet_LHL_rds_df = pd.DataFrame()
-        wavelet_LHL_rds_dict = {}
-        wavelet_LLH_rds_df = pd.DataFrame()
-        wavelet_LLH_rds_dict = {}
-        wavelet_LLL_rds_df = pd.DataFrame()
-        wavelet_LLL_rds_dict = {}
+        wavelets = {}
+        for name in wavelet_names:
+            wavelets[name] = Wavelet(pd.DataFrame(), {})
 
     if "LoG" in settings['image_filters']:
         log_rds_df = pd.DataFrame()
@@ -87,52 +76,28 @@ def run(context):
         label_sitk = sitk.GetImageFromArray(label_mask)
         features = extractor.execute(anat_img, label_sitk)
 
-        for key, value in features.items():
+        for key, value in features.iteritems():
             if "original" in key:
                 original_rds_dict[key] = [value]
-            if "HHH" in key:
-                wavelet_HHH_rds_dict[key] = [value]
-            if "HHL" in key:
-                wavelet_HHL_rds_dict[key] = [value]
-            if "HLH" in key:
-                wavelet_HLH_rds_dict[key] = [value]
-            if "HLL" in key:
-                wavelet_HLL_rds_dict[key] = [value]
-            if "LHH" in key:
-                wavelet_LHH_rds_dict[key] = [value]
-            if "LHL" in key:
-                wavelet_LHL_rds_dict[key] = [value]
-            if "LLH" in key:
-                wavelet_LLH_rds_dict[key] = [value]
-            if "LLL" in key:
-                wavelet_LLL_rds_dict[key] = [value]
-            if "sigma" in key:
+            elif "sigma" in key:
                 log_rds_dict[key] = [value]
-            if "logarithm" in key:
+            elif "logarithm" in key:
                 logarithm_rds_dict[key] = [value]
-            if "exponential" in key:
+            elif "exponential" in key:
                 exp_rds_dict[key] = [value]
+            else:
+                for name in wavelet_names:
+                    if name in key:
+                        wavelets[name].dict[key] = [value]
+                        break
 
         original_rds_df['label' + str(label)] = pd.Series(original_rds_dict)
         original_rds_dict = {}
 
         if "Wavelet" in settings['image_filters']:
-            wavelet_HHH_rds_df['label' + str(label)] = pd.Series(wavelet_HHH_rds_dict)
-            wavelet_HHH_rds_dict = {}
-            wavelet_HHL_rds_df['label' + str(label)] = pd.Series(wavelet_HHL_rds_dict)
-            wavelet_HHL_rds_dict = {}
-            wavelet_HLH_rds_df['label' + str(label)] = pd.Series(wavelet_HLH_rds_dict)
-            wavelet_HLH_rds_dict = {}
-            wavelet_HLL_rds_df['label' + str(label)] = pd.Series(wavelet_HLL_rds_dict)
-            wavelet_HLL_rds_dict = {}
-            wavelet_LHH_rds_df['label' + str(label)] = pd.Series(wavelet_LHH_rds_dict)
-            wavelet_LHH_rds_dict = {}
-            wavelet_LHL_rds_df['label' + str(label)] = pd.Series(wavelet_LHL_rds_dict)
-            wavelet_LHL_rds_dict = {}
-            wavelet_LLH_rds_df['label' + str(label)] = pd.Series(wavelet_LLH_rds_dict)
-            wavelet_LLH_rds_dict = {}
-            wavelet_LLL_rds_df['label' + str(label)] = pd.Series(wavelet_LLL_rds_dict)
-            wavelet_LLL_rds_dict = {}
+            for name in wavelet_names:
+                wavelets[name].df['label' + str(label)] = pd.Series(wavelets[name].dict)
+                wavelets[name]._replace(dict={})
 
         if "LoG" in settings['image_filters']:
             log_rds_df['label' + str(label)] = pd.Series(log_rds_dict)
@@ -164,30 +129,10 @@ def run(context):
                      os.path.join(output_dir, wavelet[1] + '_filtered_image.nii.gz'))
             context.upload_file(os.path.join(output_dir, wavelet[1] + '_filtered_image.nii.gz'),
                                 'Wavelet/' + wavelet[1] + '_filtered_image.nii.gz', tags={'wavelet'})
-        wavelet_HHH_rds_df.to_csv(os.path.join(output_dir, 'wavelet_HHH_radiomic_features.csv'))
-        context.upload_file(os.path.join(output_dir, 'wavelet_HHH_radiomic_features.csv'),
-                            'Wavelet/wavelet_HHH_radiomic_features.csv', tags={'wavelet', 'csv'})
-        wavelet_HHL_rds_df.to_csv(os.path.join(output_dir, 'wavelet_HHL_radiomic_features.csv'))
-        context.upload_file(os.path.join(output_dir, 'wavelet_HHL_radiomic_features.csv'),
-                            'Wavelet/wavelet_HHL_radiomic_features.csv', tags={'wavelet', 'csv'})
-        wavelet_HLH_rds_df.to_csv(os.path.join(output_dir, 'wavelet_HLH_radiomic_features.csv'))
-        context.upload_file(os.path.join(output_dir, 'wavelet_HLH_radiomic_features.csv'),
-                            'Wavelet/wavelet_HLH_radiomic_features.csv', tags={'wavelet', 'csv'})
-        wavelet_HLL_rds_df.to_csv(os.path.join(output_dir, 'wavelet_HLL_radiomic_features.csv'))
-        context.upload_file(os.path.join(output_dir, 'wavelet_HLL_radiomic_features.csv'),
-                            'Wavelet/wavelet_HLL_radiomic_features.csv', tags={'wavelet', 'csv'})
-        wavelet_LHH_rds_df.to_csv(os.path.join(output_dir, 'wavelet_LHH_radiomic_features.csv'))
-        context.upload_file(os.path.join(output_dir, 'wavelet_LHH_radiomic_features.csv'),
-                            'Wavelet/wavelet_LHH_radiomic_features.csv', tags={'wavelet', 'csv'})
-        wavelet_LHL_rds_df.to_csv(os.path.join(output_dir, 'wavelet_LHL_radiomic_features.csv'))
-        context.upload_file(os.path.join(output_dir, 'wavelet_LHL_radiomic_features.csv'),
-                            'Wavelet/wavelet_LHL_radiomic_features.csv', tags={'wavelet', 'csv'})
-        wavelet_LLH_rds_df.to_csv(os.path.join(output_dir, 'wavelet_LLH_radiomic_features.csv'))
-        context.upload_file(os.path.join(output_dir, 'wavelet_LLH_radiomic_features.csv'),
-                            'Wavelet/wavelet_LLH_radiomic_features.csv', tags={'wavelet', 'csv'})
-        wavelet_LLL_rds_df.to_csv(os.path.join(output_dir, 'wavelet_LLL_radiomic_features.csv'))
-        context.upload_file(os.path.join(output_dir, 'wavelet_LLL_radiomic_features.csv'),
-                            'Wavelet/wavelet_LLL_radiomic_features.csv', tags={'wavelet', 'csv'})
+        for name in wavelet_names:
+            csv_path = 'wavelet_{}_radiomic_features.csv'.format(name)
+            wavelets[name].df.to_csv(os.path.join(output_dir, csv_path))
+            context.upload_file(os.path.join(output_dir, csv_path), csv_path, tags={'wavelet', 'csv'})
 
     if "LoG" in settings['image_filters']:
         log_generator = radiomics.imageoperations.getLoGImage(anat_img, sitk.GetImageFromArray(mask_img),
