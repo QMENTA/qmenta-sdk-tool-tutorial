@@ -6,7 +6,7 @@
 
 ## Introduction
 
-In this repositorywe will guide you through the process of deploying a tool into the  [QMENTA platform](https://client.qmenta.com/#/login) and then run it.
+In this repository we will guide you through the process of deploying a tool into the  [QMENTA platform](https://client.qmenta.com/#/login) and then run it.
 
 To get more detailed and technical information about the QMENTA SDK and its capabilities, please refer to it's [documentation](https://docs.qmenta.com/sdk/).
 
