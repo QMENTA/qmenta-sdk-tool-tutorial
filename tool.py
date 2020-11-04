@@ -153,8 +153,8 @@ def run(context):
             filtered_images_to_upload.append((src_filepath, dst_platform_path, tags))
 
         for name in wavelet_names:
-            dst_platform_path = "wavelet_{}_radiomic_features.csv".format(name)
-            src_filepath = os.path.join(output_dir, dst_platform_path)
+            dst_platform_path = "Wavelet/wavelet_{}_radiomic_features.csv".format(name)
+            src_filepath = os.path.join(output_dir, "wavelet_{}_radiomic_features.csv".format(name))
             tags = {"wavelet", "csv"}
 
             wavelets[name].df.to_csv(src_filepath)
@@ -239,8 +239,8 @@ def run(context):
     # Upload original image, mask and radiomic features extracted from them
     context.set_progress(value=90, message="Uploading results")
 
-    context.upload_file(anat, "inputs/anatomical_image.nii.gz", modality=modality)
-    context.upload_file(labels, "inputs/labels_mask.nii.gz", tags=tags)
+    context.upload_file(anat, "anatomical_image.nii.gz", modality=modality)
+    context.upload_file(labels, "labels_mask.nii.gz", tags=tags)
     context.upload_file(original_radiomics_csv, "original_radiomic_features.csv", tags={"csv"})
 
     # Upload filtered images and radiomic CSVs
