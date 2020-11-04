@@ -140,3 +140,4 @@ To do so, you can go to **My Data** in the platform, select a subject that conta
  The platform will run the analysis and send an email whenever it finishes. Then, you can retrieve the results by going to **My Analysis**, selecting the finished analysis, and then click on **Result files** inside the Results tab.
  
   <img src="assets/results.png" style="width: 50%">
+  
