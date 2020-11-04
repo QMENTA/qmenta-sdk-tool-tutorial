@@ -7,7 +7,6 @@ import numpy as np
 import pandas as pd
 import radiomics
 import SimpleITK as sitk
-from radiomics import featureextractor
 
 
 def run(context):
@@ -25,16 +24,16 @@ def run(context):
     """ Basic setup """
 
     # Define directories for the input and output files inside the container
-    input_dir = os.path.join("/root", "INPUT")
-    output_dir = os.path.join("/root", "OUTPUT")
-    os.mkdir(output_dir)
+    input_dir = os.path.join(os.path.expanduser("~"), "INPUT")
+    output_dir = os.path.join(os.path.expanduser("~"), "OUTPUT")
+    os.makedirs(output_dir, exist_ok=True)
     context.set_progress(value=0, message="Processing")  # Set progress status so it is displayed in the platform
 
     """ Get the input data """
 
     # Retrieve input files
-    anat = context.get_files("input", file_filter_condition_name="c_anat")[0].download(input_dir)
-    modality = context.get_files("input", file_filter_condition_name="c_anat")[0].get_file_modality()
+    anat = context.get_files("input_anat", file_filter_condition_name="c_anat")[0].download(input_dir)
+    modality = context.get_files("input_anat", file_filter_condition_name="c_anat")[0].get_file_modality()
 
     labels = context.get_files("input_mask", file_filter_condition_name="c_labels")[0].download(input_dir)
     tags = context.get_files("input_mask", file_filter_condition_name="c_labels")[0].get_file_tags()
@@ -52,7 +51,7 @@ def run(context):
     # Create feature extractor with user specified settings
     context.set_progress(value=10, message="Instantiating feature extractor")
 
-    extractor = featureextractor.RadiomicsFeaturesExtractor()
+    extractor = radiomics.featureextractor.RadiomicsFeatureExtractor()
     extractor.disableAllFeatures()
     for feature_class in settings["feature_classes"]:  # The feature classes are retrieved from the settings
         extractor.enableFeatureClassByName(feature_class)
@@ -64,8 +63,8 @@ def run(context):
 
     # Print extractor parameters for debugging and info
     print("Extraction parameters:\n\t", extractor.settings)
-    print("Enabled filters:\n\t", extractor._enabledImagetypes)
-    print("Enabled features:\n\t", extractor._enabledFeatures)
+    print("Enabled filters:\n\t", extractor.enabledImagetypes)
+    print("Enabled features:\n\t", extractor.enabledFeatures)
 
     # Initialize all necessary dataframes and dicts
     original_rds_df = pd.DataFrame()
@@ -98,7 +97,7 @@ def run(context):
         label_sitk = sitk.GetImageFromArray(label_mask)
         features = extractor.execute(anat_img, label_sitk)
 
-        for key, value in features.iteritems():
+        for key, value in features.items():
             if "original" in key:
                 original_rds_dict[key] = [value]
             elif "sigma" in key:
