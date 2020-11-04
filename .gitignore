@@ -5,8 +5,8 @@
 .idea
 
 # Generated output
-./data/output
-!./data/output/.gitkeep
+data/output/**
+!data/output/.gitkeep
 
 # Python artifacts
 __pycache__
