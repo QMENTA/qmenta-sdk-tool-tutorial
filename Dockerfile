@@ -1,11 +1,11 @@
 FROM python:3.6
-LABEL mantainer="QMENTA Inc. "
+LABEL mantainer="QMENTA Inc."
 WORKDIR '/root'
 
 # Add tool script
 COPY tool.py /root/tool.py
 
-# Install and upgrade all the required libraries and tools (in this case only python libraries are needed).
+# Install and upgrade all the required libraries and tools (in this case only python libraries are needed)
 RUN python -m pip install --upgrade pip
 RUN python -m pip install pyradiomics SimpleITK nibabel numpy pandas qmenta-sdk-lib
 
