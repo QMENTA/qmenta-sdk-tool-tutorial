@@ -1,0 +1,13 @@
+# VSCode
+.vscode
+
+# JetBrains IDEs
+.idea
+
+# Generated output
+data/output/**
+!data/output/.gitkeep
+
+# Python artifacts
+__pycache__
+

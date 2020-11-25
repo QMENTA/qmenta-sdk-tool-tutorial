@@ -6,12 +6,10 @@
   {
     "type": "container",
     "title": "Oncology medical image",
-    "id": "input",
+    "id": "input_anat",
     "mandatory": 1,
     "file_filter": "c_anat[1,1]((m'CT'|m'T1'|m'T2'|m'SCALAR'))",
-    "in_filter": [
-      "mri_brain_data"
-    ],
+    "in_filter": ["mri_brain_data"],
     "out_filter": [],
     "batch": 1,
     "anchor": 1,
@@ -23,9 +21,7 @@
     "id": "input_mask",
     "mandatory": 1,
     "file_filter": "c_labels[1,1]((t'labels'|t'mask'))",
-    "in_filter": [
-      "mri_brain_data"
-    ],
+    "in_filter": ["mri_brain_data"],
     "out_filter": [],
     "batch": 1,
     "anchor": 1,
@@ -44,37 +40,14 @@
     "title": "Feature classes",
     "mandatory": "1",
     "options": [
-      [
-        "firstorder",
-        "First Order Features"
-      ],
-      [
-        "shape",
-        "Shape Features"
-      ],
-      [
-        "glcm",
-        "Gray Level Co-occurrence Matrix (GLCM)"
-      ],
-      [
-        "glszm",
-        "Gray Level Size Zone Matrix (GLSZM)"
-      ],
-      [
-        "ngtdm",
-        "Neighbouring Gray Tone Difference Matrix (NGTDM)"
-      ],
-      [
-        "gldm",
-        "Gray Level Dependence Matrix (GLDM)"
-      ]
+      ["firstorder", "First Order Features"],
+      ["shape", "Shape Features"],
+      ["glcm", "Gray Level Co-occurrence Matrix (GLCM)"],
+      ["glszm", "Gray Level Size Zone Matrix (GLSZM)"],
+      ["ngtdm", "Neighbouring Gray Tone Difference Matrix (NGTDM)"],
+      ["gldm", "Gray Level Dependence Matrix (GLDM)"]
     ],
-    "default": [
-      "firstorder",
-      "shape",
-      "glcm",
-      "glszm"
-    ]
+    "default": ["firstorder", "shape", "glcm", "glszm"]
   },
   {
     "type": "line"
@@ -89,25 +62,12 @@
     "title": "Image filters",
     "mandatory": "0",
     "options": [
-      [
-        "Wavelet",
-        "Wavelet"
-      ],
-      [
-        "LoG",
-        "Laplacian of Gaussian"
-      ],
-      [
-        "Logarithm",
-        "Logarithm"
-      ],
-      [
-        "Exponential",
-        "Exponential"
-      ]
+      ["Wavelet", "Wavelet"],
+      ["LoG", "Laplacian of Gaussian"],
+      ["Logarithm", "Logarithm"],
+      ["Exponential", "Exponential"]
     ],
-    "default": [
-    ]
+    "default": []
   },
   {
     "type": "indent",

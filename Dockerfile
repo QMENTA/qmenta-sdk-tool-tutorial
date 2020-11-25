@@ -1,9 +1,14 @@
-# Start from a QMENTA public container containing python 3, qmenta-sdk library and a configured entrypoint.
-FROM qmentasdk/minimal:latest
+FROM python:3.6
+LABEL mantainer="QMENTA Inc."
+WORKDIR '/root'
 
-#Copy the tool script to the container.
+# Add tool script
 COPY tool.py /root/tool.py
 
-# Install all the required libraries and tools (in this case only python libraries are needed).
-RUN pip install SimpleITK nibabel numpy pandas
-RUN python -m pip install pyradiomics
+# Install and upgrade all the required libraries and tools (in this case only python libraries are needed)
+RUN python -m pip install --upgrade pip
+RUN python -m pip install pyradiomics SimpleITK nibabel numpy pandas qmenta-sdk-lib
+
+# Configure entrypoint
+RUN python -m qmenta.sdk.make_entrypoint /root/entrypoint.sh /root/
+RUN chmod +x /root/entrypoint.sh
