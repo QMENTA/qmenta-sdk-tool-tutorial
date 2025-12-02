@@ -1,0 +1,32 @@
+This is the execution log --> Starting context.
+Tool starting
+ANTsImage (LPI)
+	 Pixel Type : float (float32)
+	 Components : 1
+	 Dimensions : (176, 256, 256)
+	 Spacing    : (1.0, 1.0, 1.0)
+	 Origin     : (89.5025, 104.313, -138.678)
+	 Direction  : [-0.9999  0.      0.0157  0.     -1.      0.      0.0157  0.      0.9999]
+
+Operations:
+- Median: 4.0
+- STD: 120.00117492675781
+- Arg. Min: 0
+- Arg. Max: 7831133
+- Flatten: [0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+- Non-zero: (array([  0,   0,   0, ..., 175, 175, 175]), array([  1,   1,   1, ..., 254, 254, 254]), array([  4,   5,   6, ..., 179, 183, 188]))
+- Unique: [0. 1. 2. 3. 4. 5. 6. 7. 8. 9.]
+
+ANTsImage (RSP)
+	 Pixel Type : float (float32)
+	 Components : 1
+	 Dimensions : (256, 256, 256)
+	 Spacing    : (1.0, 1.0, 1.0)
+	 Origin     : (-124.4761, 104.313, 118.6885)
+	 Direction  : [ 1.  0.  0.  0. -0. -1.  0. -1.  0.]
+
+Operations between images could not be performed
+images do not occupy same physical space
+Before: (1.0, 1.0, 1.0)
+After: (2.0, 2.0, 2.0)
+Performing steps: do_biasfieldcorrection

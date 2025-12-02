@@ -1,6 +1,0 @@
-numpy 
-SimpleITK 
-nibabel 
-pandas 
-pyradiomics
-qmenta-sdk-lib

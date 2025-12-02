@@ -11,6 +11,9 @@ data/output/**
 # Python artifacts
 __pycache__
 
-#virtual env
+# virtual env
 .venv/
+
+# sample data folder
+**/local/test/sample_data/
 
