@@ -11,7 +11,15 @@ This repository contains the data, code, scripts and configuration files associa
 The tutorial helps you learn the foundations of using the QMENTA SDK and the technological ecosystem around it,
 including Docker and the [QMENTA platform](https://client.qmenta.com/#/login).
 
-As a case study, the tutorial goes over the implementation of a tool that takes as inputs an oncology medical image and a segmentation mask with one or more labels, and then uses the [pyradiomics library] to extract radiomic features from the data.
+### ANTs example
+
+As a case study, the tutorial goes partially over the [ANTs Tutorial](https://github.com/ANTsX/ANTsPy/blob/master/tutorials/10minTutorial.ipynb)
+implementation. The implementation will allow the user to select which processing steps to perform and also select a
+variety of parameters for segmenting the images.
+
+### Pyradiomics example
+
+Next, the tutorial goes over the implementation of a tool that takes as inputs an oncology medical image and a segmentation mask with one or more labels, and then uses the [pyradiomics library] to extract radiomic features from the data.
 The tool will allow the user to select which classes of radiomic features they want to compute and also select a
 variety of image filters to be applied before extracting the radiomic features.
 
