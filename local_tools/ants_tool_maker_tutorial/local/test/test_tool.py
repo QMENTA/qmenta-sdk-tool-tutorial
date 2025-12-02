@@ -12,12 +12,12 @@ from ants_tool_maker_tutorial.tool import QmentaSDKToolMakerTutorial
 class TestTool(unittest.TestCase):
     """Tests for the Tool.
     Execute this test in the same folder where the folder "local_tools" is created
-    $ pytest local_tools/qmenta-sdk-tool-maker-tutorial/local/test/test_tool.py::TestTool::test_basic_call
+    $ pytest local_tools/ants_tool_maker_tutorial/local/test/test_tool.py::TestTool::test_basic_call
     """
 
     def test_basic_call(self):
         """A basic test call"""
-        os.environ["WORKDIR"] = os.path.join("local_tools/qmenta-sdk-tool-maker-tutorial/local/test/test_basic_call/execution_folder")
+        os.environ["WORKDIR"] = os.path.join("local_tools/ants_tool_maker_tutorial/local/test/test_basic_call/execution_folder")
         QmentaSDKToolMakerTutorial().test_with_args(
             in_args={
                 "test_name": inspect.getframeinfo(inspect.currentframe()).function,  # returns function name
@@ -76,7 +76,7 @@ class TestToolDocker(unittest.TestCase):
     username/tool_name:version
 
     Push the image:
-    docker push username/qmenta-sdk-tool-maker-tutorial:1.0
+    docker push username/ants_tool_maker_tutorial:1.0
     """
 
     def test_basic_call(self):
