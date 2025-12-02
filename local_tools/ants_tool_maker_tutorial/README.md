@@ -1,6 +1,6 @@
 # QMENTA SDK Tool Tutorial
 
-<img src="assets/qmenta_logo.png" alt="QMENTA" style="width: 50%">
+<img src="../assets/qmenta_logo.png" alt="QMENTA" style="width: 50%">
 
 ---
 
