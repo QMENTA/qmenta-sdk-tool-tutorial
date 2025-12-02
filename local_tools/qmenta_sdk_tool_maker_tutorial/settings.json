@@ -1,0 +1,73 @@
+[
+  {
+    "type": "info",
+    "content": "Required inputs:<br><b>&bull; Oncology medical image</b>: 3D image to analyze<br>&ensp;"
+  },
+  {
+    "id": "input_images",
+    "type": "container",
+    "file_filter": "(c_image1[1,1]((m'T1'|m'SCALAR')) AND c_image2[1,1]((m'CT'|m'T2')))",
+    "title": "Oncology medical image",
+    "info": "Accepted modalities: 'T1', 'T2', 'CT', 'SCALAR'<br>",
+    "in_filter": [
+      "mri_brain_data"
+    ],
+    "out_filter": [],
+    "anchor": 1,
+    "batch": 1,
+    "mandatory": 1
+  },
+  {
+    "id": "input_labels",
+    "type": "container",
+    "file_filter": "c_labels[1,1](((r'labels')|(r'mask')))",
+    "title": "Labels mask",
+    "info": "<b>&bull;Labels mask</b>: Mask containing one or more labels.<br>&ensp;Accepted tags: 'mask','labels'",
+    "in_filter": [
+      "mri_brain_data"
+    ],
+    "out_filter": [],
+    "anchor": 1,
+    "batch": 1,
+    "mandatory": 1
+  },
+  {
+    "type": "line"
+  },
+  {
+    "type": "heading",
+    "content": "Radiomic feature classes:"
+  },
+  {
+    "id": "perform_steps",
+    "type": "multiple_choice",
+    "title": "Feature classes",
+    "options": [
+      [
+        "do_biasfieldcorrection",
+        "Perform Bias Field Correction"
+      ],
+      [
+        "do_segmentation",
+        "Perform tissue segmentation"
+      ],
+      [
+        "do_thickness",
+        "Perform cortical thickness"
+      ]
+    ],
+    "default": [
+      "do_biasfieldcorrection",
+      "do_segmentation"
+    ]
+  },
+  {
+    "type": "line"
+  },
+  {
+    "id": "mrf",
+    "type": "string",
+    "title": "mrf parameters as a string, usually \"[smoothingFactor,radius]\" where smoothingFactor determines the amount of smoothing and radius determines the MRF neighborhood, as an ANTs style neighborhood vector eg \"1x1x1\" for a 3D image.",
+    "default": "[0.2, 1x1x1]"
+  }
+]

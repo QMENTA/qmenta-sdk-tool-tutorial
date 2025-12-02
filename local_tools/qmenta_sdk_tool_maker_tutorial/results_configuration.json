@@ -1,0 +1,79 @@
+{
+  "screen": {
+    "type": "tab",
+    "children": [
+      {
+        "children": [
+          {
+            "type": "tool",
+            "tool": "papaya",
+            "region": "center",
+            "width": "50%",
+            "load_element": 1
+          },
+          {
+            "type": "tool",
+            "tool": "papaya",
+            "region": "right",
+            "width": "50%",
+            "load_element": 2
+          }
+        ],
+        "orientation": "vertical",
+        "type": "split",
+        "button_label": "Images"
+      },
+      {
+        "type": "tool",
+        "tool": "html_inject",
+        "region": "center",
+        "width": "100%",
+        "button_label": "Report",
+        "load_element": 3
+      }
+    ]
+  },
+  "tools": [
+    {
+      "type": "tool",
+      "tool_code": "papaya",
+      "config": {
+        "images": [
+          {
+            "file": "T1brain.nii.gz",
+            "coloring": "Grayscale"
+          },
+          {
+            "file": "tissueSegmentation.nii.gz",
+            "coloring": "custom"
+          }
+        ],
+        "title": "Tissue segmentation over T1"
+      }
+    },
+    {
+      "type": "tool",
+      "tool_code": "papaya",
+      "config": {
+        "images": [
+          {
+            "file": "m'T1'",
+            "coloring": "Grayscale"
+          },
+          {
+            "file": "t'seg'",
+            "coloring": "custom_random"
+          }
+        ],
+        "title": "Labels segmentation over T1"
+      }
+    },
+    {
+      "type": "tool",
+      "tool_code": "html_inject",
+      "config": {
+        "file": "online_report.html"
+      }
+    }
+  ]
+}

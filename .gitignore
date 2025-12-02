@@ -11,3 +11,6 @@ data/output/**
 # Python artifacts
 __pycache__
 
+#virtual env
+.venv/
+
