@@ -110,6 +110,7 @@ class QmentaSDKToolMakerTutorial(Tool):
                 ["do_biasfieldcorrection", "Perform Bias Field Correction"],
                 ["do_segmentation", "Perform tissue segmentation"],
                 ["do_thickness", "Perform cortical thickness"],
+                ["do_registration", "ANTs registration interface"],
             ], 
             default=["do_biasfieldcorrection", "do_segmentation"],
             title="Which steps do you want to execute?",
@@ -146,6 +147,7 @@ class QmentaSDKToolMakerTutorial(Tool):
 
         fname1_handler = self.inputs.input_images.c_image1[0]
         fname1 = fname1_handler.file_path
+
         img = ants.image_read(fname1)
         logger.info(img)
 
@@ -160,29 +162,29 @@ class QmentaSDKToolMakerTutorial(Tool):
         )
 
         labels = self.inputs.input_labels.c_labels[0].file_path
-        img2 = ants.image_read(labels)
-        logger.info(img2)
+        img_labels = ants.image_read(labels)
+        logger.info(img_labels)
 
         # do any operations directly on ANTsImage types
         try:
-            _ = img2 - img
-            _ = img2 > img
-            _ = img2 / img
-            _ = img2 == img
+            _ = img_labels - img
+            _ = img_labels > img
+            _ = img_labels / img
+            _ = img_labels == img
             # test if two images are allclose in values
-            issame = ants.allclose(img, img2)
+            issame = ants.allclose(img, img_labels)
             logger.info(f"two images are allclose in values? : {issame}")
             # test if two images have same physical space
-            issame_phys = ants.image_physical_space_consistency(img, img2)
+            issame_phys = ants.image_physical_space_consistency(img, img_labels)
             logger.info(f"two images have same physical space : {issame_phys}")
         except ValueError as err:
             logger.error(f"Operations between images could not be performed\n{str(err)}")
 
         # change any physical properties
-        img4 = img.clone()
-        logger.info(f"Before: {img4.spacing}")
-        img4.set_spacing((2,2,2))
-        logger.info(f"After: {img4.spacing}")
+        img_clone = img.clone()
+        logger.info(f"Before: {img_clone.spacing}")
+        img_clone.set_spacing((2,2,2))
+        logger.info(f"After: {img_clone.spacing}")
 
         context.upload_file(
             source_file_path=fname1, 
@@ -202,6 +204,7 @@ class QmentaSDKToolMakerTutorial(Tool):
         logger.info(f"Performing steps: {"\n".join(self.inputs.perform_steps)}")
 
         if "do_biasfieldcorrection" in self.inputs.perform_steps:
+            logger.info("Started N4 bias field correction")
             image = ants.image_read(fname1)
             image_n4 = ants.n4_bias_field_correction(image)
             # save to filename
@@ -222,12 +225,14 @@ class QmentaSDKToolMakerTutorial(Tool):
                 image_caption=f"Output of the n4 bias field correction for {os.path.basename(fname1)}",
             )
 
-        if "do_segmentation" in self.inputs.perform_steps:
+        if "do_segmentation" in self.inputs.perform_steps and \
+            "do_thickness" not in self.inputs.perform_steps:
+            logger.info("Started segmentation")
             img = ants.image_read(fname1)
-            img = ants.resample_image(img, (64, 64, 64), 1, 0)
-            mask = ants.get_mask(img)
+            img_resampled = ants.resample_image(img, (64, 64, 64), 1, 0)
+            mask = ants.get_mask(img_resampled)
             img_seg = ants.atropos(
-                a=img, m=self.inputs.mrf, c='[2,0]', i='kmeans[3]', x=mask
+                a=img_resampled, m=self.inputs.mrf, c='[2,0]', i='kmeans[3]', x=mask
             )
             # save to filename
             img_seg["segmentation"].to_filename("atropos_processed.nii.gz")
@@ -248,16 +253,17 @@ class QmentaSDKToolMakerTutorial(Tool):
                 image_caption=f"Output of ANTs Atropos for {os.path.basename(fname1)}",
             )
 
-        if "do_thickness" in self.inputs.perform_steps:
+        elif "do_thickness" in self.inputs.perform_steps:
+            logger.info("Started thickness")
             img = ants.image_read(fname1)
             mask = ants.get_mask(img).threshold_image(1, 2)
-            segs=ants.atropos( a = img, m = self.inputs.mrf, c = '[2,0]',  i = 'kmeans[3]', x = mask )
+            segs = ants.atropos(a = img, m = self.inputs.mrf, c = "[2,0]",  i = "kmeans[3]", x = mask)
             thickimg = ants.kelly_kapowski(
                 s=segs['segmentation'], 
                 g=segs['probabilityimages'][1],
                 w=segs['probabilityimages'][2], 
                 its=45, r=0.5, m=1
-            )
+            )            
             logger.info(f"thickness image : {thickimg}")
             thickimg.to_filename("thickness_processed.nii.gz")
             context.upload_file(
@@ -274,6 +280,31 @@ class QmentaSDKToolMakerTutorial(Tool):
                 image_description=f"Output of ANTs Kelly Kapowski for {os.path.basename(fname1)}",
                 image_caption=f"Output of ANTs Kelly Kapowski for {os.path.basename(fname1)}",
             )
+        
+        if "do_registration" in self.inputs.perform_steps:
+            logger.info("Started registration")
+            fname2_handler = self.inputs.input_images.c_image2[0]
+            fname2 = fname2_handler.file_path
+            fixed = ants.image_read(fname1)
+            moving = ants.image_read(fname2)
+            mytx = ants.registration(fixed=fixed, moving=moving, type_of_transform='SyN')
+            logger.info("Finished registration")
+            logger.info(mytx)
+            warped_moving = mytx['warpedmovout'].to_filename("warped.nii.gz")
+            context.upload_file(
+                "warped.nii.gz", 
+                "warped.nii.gz"
+            )
+            png_image = "registration.png"
+            fixed.plot(overlay=warped_moving, title='After Registration', filename=png_image)
+            context.upload_file(png_image, png_image)
+            body_content += BODY_TEMPLATE.format(
+                header="Registration step",
+                src_image=png_image,
+                image_description=f"Output of ANTs Registration for {os.path.basename(fname1)}",
+                image_caption=f"Output of ANTs Registration for {os.path.basename(fname1)}",
+            )
+        
         if body_content:
             report_output = "online_report.html"
             with open(report_output, "w") as f1:

@@ -55,7 +55,7 @@ class TestTool(unittest.TestCase):
                     "mandatory": 1,
                 },
                 "perform_steps": [
-                    "do_biasfieldcorrection", "do_segmentation", "do_thickness"
+                     "do_registration", "do_biasfieldcorrection", "do_thickness"
                 ]
             },
             overwrite_settings=True,  # True if you want to overwrite settings.json

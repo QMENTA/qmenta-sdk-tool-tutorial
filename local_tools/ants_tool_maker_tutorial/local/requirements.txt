@@ -1,6 +1,2 @@
-numpy 
-SimpleITK 
-nibabel 
-pandas 
-pyradiomics
-qmenta-sdk-lib
+antspyx==0.6.1
+qmenta-sdk-lib==2.0

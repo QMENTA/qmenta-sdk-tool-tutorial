@@ -54,6 +54,10 @@
       [
         "do_thickness",
         "Perform cortical thickness"
+      ],
+      [
+        "do_registration",
+        "ANTs registration interface"
       ]
     ],
     "default": [
