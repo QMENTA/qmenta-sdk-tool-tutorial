@@ -15,5 +15,7 @@ __pycache__
 .venv/
 
 # sample data folder
-**/local/test/sample_data/
-
+**/local/test/sample_data
+**/local/test/tool.py
+**/local/test/Dockerfile
+**/local/test/requirements.txt
