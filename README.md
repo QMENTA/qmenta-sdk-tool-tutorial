@@ -16,6 +16,8 @@ including Docker and the [QMENTA platform](https://client.qmenta.com/#/login).
 As a case study, the tutorial goes partially over the [ANTs Tutorial](https://github.com/ANTsX/ANTsPy/blob/master/tutorials/10minTutorial.ipynb)
 implementation. The implementation will allow the user to select which processing steps to perform and also select a
 variety of parameters for segmenting the images.
+If you want to start this tool example, please follow the instructions for ANTsPy on their official
+documentation website first: [antspyx library]: https://github.com/antsx/antspy/blob/master/tutorials/Installation.md
 
 ### Pyradiomics example
 
