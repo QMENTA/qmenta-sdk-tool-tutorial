@@ -30,6 +30,8 @@
     }
   ],
   "perform_steps": [
-    "do_registration"
+    "do_registration",
+    "do_biasfieldcorrection",
+    "do_thickness"
   ]
 }
