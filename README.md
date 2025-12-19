@@ -18,6 +18,7 @@ implementation. The implementation will allow the user to select which processin
 variety of parameters for segmenting the images.
 If you want to start this tool example, please follow the instructions for ANTsPy on their official
 documentation website first: [antspyx library]: https://github.com/antsx/antspy/blob/master/tutorials/Installation.md
+The tutorial can be found in the [QMENTA SDK documentation](https://docs.qmenta.com/sdk/tool_tutorial.html)
 
 ### Pyradiomics example
 
