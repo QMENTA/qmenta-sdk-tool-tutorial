@@ -13,7 +13,7 @@ from qmenta.sdk.tool_maker.outputs import (
     Split,
     Tab,
 )
-from qmenta.sdk.tool_maker.modalities import Modality
+from qmenta.sdk.tool_maker.modalities import Modality, Tag
 from qmenta.sdk.tool_maker.tool_maker import InputFile, Tool, FilterFile
 
 HTML_TEMPLATE = """
@@ -31,10 +31,8 @@ HTML_TEMPLATE = """
 
 BODY_TEMPLATE ="""
 <h1>{header}</h1>
-<figure>
-    <img src={src_image} alt={image_description} style="max-width: 400px;">
-    <figcaption>{image_caption}</figcaption>
-</figure>
+<h3>{image_caption}</h3>
+<img src="{src_image}" alt="{image_description}" style="max-width: 400px;">
 """
 
 
@@ -45,15 +43,12 @@ class QmentaSDKToolMakerTutorial(Tool):
         More information on the inputs can be found here:
         https://docs.qmenta.com/sdk/guides_docs/settings.html
         """
-        # Displays a text box in blue color with the information specified.
-        self.add_info(
-            "ANTsPy tutorial settings." \
-        )
-        
+      
         # Add the file selection method:
         self.add_input_container(
             title="Oncology medical image",
-            info="Required inputs:<br><b>&bull; Anatomical brain medical image</b>: 2D image to analyze<br>&ensp;Accepted modalities: 'T1', 'T2'",  # text in case we want to show which modalities are accepted by the filter.
+            info="<h2>ANTsPY Tutorial</h2>Required inputs:<br><b>&bull; Anatomical brain medical image</b>: " \
+            "2D image to analyze<br>&ensp;Accepted modalities: 'T1', 'T2'<br>&ensp;Two files with different tags: 'r16' and 'r64'",  # text in case we want to show which modalities are accepted by the filter.
             anchor=1,
             batch=1,
             container_id="input_images",
@@ -63,7 +58,7 @@ class QmentaSDKToolMakerTutorial(Tool):
                     file_filter_condition_name="c_image1",
                     filter_file=FilterFile(
                         modality=[Modality.T1, Modality.T2],
-                        tags=[["r16"]]
+                        tags=[Tag("r16")]
                     ),
                     mandatory=1,
                     min_files=1,
@@ -73,7 +68,7 @@ class QmentaSDKToolMakerTutorial(Tool):
                     file_filter_condition_name="c_image2",
                     filter_file=FilterFile(
                         modality=[Modality.T1, Modality.T2],
-                        tags=[["r64"]]
+                        tags=[Tag("r64")]
                     ),
                     mandatory=1,
                     min_files=1,
@@ -183,7 +178,7 @@ class QmentaSDKToolMakerTutorial(Tool):
         logger.info(f"two images have same physical space : {issame_phys}")
 
         body_content = ""
-        logger.info(f"Performing steps: {"\n".join(self.inputs.perform_steps)}")
+        logger.info("Performing steps: {}".format('\n'.join(self.inputs.perform_steps)))
 
         if "do_biasfieldcorrection" in self.inputs.perform_steps:
             logger.info("Started N4 bias field correction")
@@ -318,7 +313,7 @@ class QmentaSDKToolMakerTutorial(Tool):
 
         # You can use modality or tag of the output file to select the file to be shown in the viewer.
         papaya_2.add_file(file="input_image.nii.gz", coloring=Coloring.grayscale)  # using the file modality
-        papaya_2.add_file(file="warped.nii.gz", coloring=Coloring.custom_random)  # using file tag
+        papaya_2.add_file(file="warped.nii.gz", coloring=Coloring.red)  # using file tag
         result_conf.add_visualization(new_element=papaya_2)
 
         # To create a split, specify which ones are the objects to be shown in the split
