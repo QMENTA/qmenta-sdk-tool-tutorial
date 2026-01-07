@@ -26,36 +26,24 @@ class TestTool(unittest.TestCase):
                     "files": [
                         # Relative paths to the input data stored in the sample_data folder
                         TestFileInput(
-                            path="T1.nii.gz",
+                            path="data_r16.nii.gz",
                             file_filter_condition_name="c_image1",
                             modality=Modality.T1,
-                            tags=[Tag("post_contrast"), Tag("gad")],
+                            tags=[Tag("r16")],
                             mandatory=1
                         ),
                         TestFileInput(
-                            path="T2.nii.gz",
+                            path="data_r64.nii.gz",
                             file_filter_condition_name="c_image2",
-                            modality=Modality.T2,
-                            tags=[Tag("se")],
-                            mandatory=1
-                        )
-                    ],
-                    "mandatory": 1,
-                },
-                "input_labels": {
-                    "files": [
-                        # Relative paths to the input data stored in the sample_data folder
-                        TestFileInput(
-                            path="labeled.nii.gz",
-                            file_filter_condition_name="c_labels",
-                            tags=[Tag("labels")],
+                            modality=Modality.T1,
+                            tags=[Tag("r64")],
                             mandatory=1
                         )
                     ],
                     "mandatory": 1,
                 },
                 "perform_steps": [
-                     "do_registration", "do_biasfieldcorrection", "do_thickness"
+                    "do_registration", "do_biasfieldcorrection", "do_thickness"
                 ]
             },
             overwrite_settings=True,  # True if you want to overwrite settings.json

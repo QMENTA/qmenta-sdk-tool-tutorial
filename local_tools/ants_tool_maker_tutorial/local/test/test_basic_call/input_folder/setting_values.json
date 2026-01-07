@@ -3,30 +3,20 @@
   "sample_data_folder": "sample_data",
   "input_images": [
     {
-      "path": "T1.nii.gz",
+      "path": "data_r16.nii.gz",
       "modality": "T1",
       "tags": [
-        "post_contrast",
-        "gad"
+        "r16"
       ],
       "file_filter_condition_name": "c_image1"
     },
     {
-      "path": "T2.nii.gz",
-      "modality": "T2",
+      "path": "data_r64.nii.gz",
+      "modality": "T1",
       "tags": [
-        "se"
+        "r64"
       ],
       "file_filter_condition_name": "c_image2"
-    }
-  ],
-  "input_labels": [
-    {
-      "path": "labeled.nii.gz",
-      "tags": [
-        "labels"
-      ],
-      "file_filter_condition_name": "c_labels"
     }
   ],
   "perform_steps": [

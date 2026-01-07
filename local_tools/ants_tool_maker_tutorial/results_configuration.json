@@ -46,9 +46,13 @@
           {
             "file": "atropos_processed.nii.gz",
             "coloring": "custom"
+          },
+          {
+            "file": "thickness_processed.nii.gz",
+            "coloring": "Hot-and-Cold"
           }
         ],
-        "title": "Tissue segmentation over T1"
+        "title": "T1 ANTs segmentation and cortical thickness"
       }
     },
     {
@@ -61,11 +65,11 @@
             "coloring": "Grayscale"
           },
           {
-            "file": "thickness_processed.nii.gz",
+            "file": "warped.nii.gz",
             "coloring": "custom_random"
           }
         ],
-        "title": "Labels segmentation over T1"
+        "title": "T1 ANTs registration"
       }
     },
     {
