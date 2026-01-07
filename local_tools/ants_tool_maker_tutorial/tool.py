@@ -103,7 +103,7 @@ class QmentaSDKToolMakerTutorial(Tool):
             default="[0.2, 1x1]",  # antspy tutorial uses 2D iamge
             title="'mrf' parameters as a string, usually \"[smoothingFactor,radius]\" " \
             "where smoothingFactor determines the amount of smoothing and radius determines " \
-            "the MRF neighborhood, as an ANTs style neighborhood vector eg \"1x1x1\" for a 3D image.", 
+            "the MRF neighborhood, as an ANTs style neighborhood vector eg \"1x1\" for a 2D image.", 
         )
 
     def run(self, context):
