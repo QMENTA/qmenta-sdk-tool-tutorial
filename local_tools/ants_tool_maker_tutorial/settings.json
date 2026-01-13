@@ -18,12 +18,12 @@
   },
   {
     "type": "heading",
-    "content": "ANTs tool can perform the following steps"
+    "content": "PyANTs tool can perform the following steps:"
   },
   {
     "id": "perform_steps",
     "type": "multiple_choice",
-    "title": "Which steps do you want to execute?",
+    "title": "Which step/s do you want to execute?",
     "options": [
       [
         "do_biasfieldcorrection",
@@ -44,7 +44,9 @@
     ],
     "default": [
       "do_biasfieldcorrection",
-      "do_segmentation"
+      "do_segmentation",
+      "do_thickness",
+      "do_registration"
     ]
   },
   {
@@ -53,7 +55,7 @@
   {
     "id": "mrf",
     "type": "string",
-    "title": "'mrf' parameters as a string, usually \"[smoothingFactor,radius]\" where smoothingFactor determines the amount of smoothing and radius determines the MRF neighborhood, as an ANTs style neighborhood vector eg \"1x1x1\" for a 3D image.",
+    "title": "'mrf' parameters as a string, usually \"[smoothingFactor,radius]\" where smoothingFactor determines the amount of smoothing and radius determines the MRF neighborhood, as an ANTs style neighborhood vector eg \"1x1\" for a 2D image.",
     "default": "[0.2, 1x1]"
   }
 ]

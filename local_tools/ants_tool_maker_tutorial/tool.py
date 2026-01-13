@@ -81,18 +81,23 @@ class QmentaSDKToolMakerTutorial(Tool):
         self.add_line()
 
         # Displays a header text
-        self.add_heading("ANTs tool can perform the following steps")
+        self.add_heading("PyANTs tool can perform the following steps:")
 
         self.add_input_multiple_choice(
             id_="perform_steps",
             options=[
-                ["do_biasfieldcorrection", "Perform Bias Field Correction"],
-                ["do_segmentation", "Perform tissue segmentation"],
-                ["do_thickness", "Perform cortical thickness"],
-                ["do_registration", "ANTs registration interface"],
+                ("do_biasfieldcorrection", "Perform Bias Field Correction"),
+                ("do_segmentation", "Perform tissue segmentation"),
+                ("do_thickness", "Perform cortical thickness"),
+                ("do_registration", "ANTs registration interface"),
             ], 
-            default=["do_biasfieldcorrection", "do_segmentation"],
-            title="Which steps do you want to execute?",
+            default=[
+                "do_biasfieldcorrection", 
+                "do_segmentation",
+                "do_thickness",
+                "do_registration"
+            ],
+            title="Which step/s do you want to execute?",
         )
         
         # Displays an horizontal line
@@ -100,7 +105,7 @@ class QmentaSDKToolMakerTutorial(Tool):
 
         self.add_input_string(
             id_="mrf", 
-            default="[0.2, 1x1]",  # antspy tutorial uses 2D iamge
+            default="[0.2, 1x1]",  # antspy tutorial uses 2D image
             title="'mrf' parameters as a string, usually \"[smoothingFactor,radius]\" " \
             "where smoothingFactor determines the amount of smoothing and radius determines " \
             "the MRF neighborhood, as an ANTs style neighborhood vector eg \"1x1\" for a 2D image.", 
@@ -108,187 +113,190 @@ class QmentaSDKToolMakerTutorial(Tool):
 
     def run(self, context):
         """
-        This is the main function that is called when the tool is run.
+        Main entry point for the tool execution.
+
+        The workflow is divided into three phases:
+        1. Processing: execute ANTs operations and write result files.
+        2. Reporting: generate visualizations and build the HTML report.
+        3. Uploading: upload all outputs to the QMENTA Platform.
         """
-        # ================ #
-        # GETTING THINGS READY
+
+        # ============================================================
+        # INITIAL SETUP
+        # ============================================================
         logger = logging.getLogger("main")
         logger.info("Tool starting")
-        # Define directories for the input and output files inside the container
+
+        # Define and create working directory
         output_dir = os.path.join(os.environ.get("WORKDIR", "/root"), "OUTPUT")
         os.makedirs(output_dir, exist_ok=True)
-
         os.chdir(output_dir)
-        context.set_progress(value=0, message="Processing")  # Set progress status so it is displayed in the platform
 
-        # Downloads all the files and populate the variable self.inputs with the handlers and parameters
-        context.set_progress(message="Downloading input data and setting self.inputs object")
+        context.set_progress(value=0, message="Initializing tool execution")
+
+        # Download inputs and populate self.inputs
+        context.set_progress(message="Downloading input data")
         self.prepare_inputs(context, logger)
 
+        # Retrieve input image paths
         fname1_handler = self.inputs.input_images.c_image1[0]
         fname1 = fname1_handler.file_path
 
+        fname2 = None
+        if "do_registration" in self.inputs.perform_steps:
+            fname2 = self.inputs.input_images.c_image2[0].file_path
+
+        # Containers to track outputs
+        generated_files = []
+        report_items = []
+
+        # ============================================================
+        # PROCESSING PHASE
+        # ============================================================
+        logger.info("Starting processing phase")
+        logger.info("Selected steps:\n{}".format("\n".join(self.inputs.perform_steps)))
+
+        img = ants.image_read(fname1)
+
+        # --- Bias Field Correction ---
+        if "do_biasfieldcorrection" in self.inputs.perform_steps:
+            logger.info("Running N4 bias field correction")
+            image_n4 = ants.n4_bias_field_correction(img)
+            image_n4.to_filename("n4_processed.nii.gz")
+
+            generated_files.append("n4_processed.nii.gz")
+            report_items.append({
+                "header": "N4 Bias Field Correction",
+                "image": "n4_bias.png",
+                "source_image": image_n4,
+                "description": "N4 bias field correction result",
+            })
+
+        # Enforce dependency: segmentation required for thickness
+        if "do_thickness" in self.inputs.perform_steps and "do_segmentation" not in self.inputs.perform_steps:
+            self.inputs.perform_steps.append("do_segmentation")
+
+        # --- Tissue Segmentation ---
+        if "do_segmentation" in self.inputs.perform_steps:
+            logger.info("Running tissue segmentation")
+            mask = ants.get_mask(img)
+
+            img_seg = ants.atropos(
+                a=img,
+                m=self.inputs.mrf,
+                c='[2,0]',
+                i='kmeans[3]',
+                x=mask
+            )
+
+            img_seg["segmentation"].to_filename("atropos_processed.nii.gz")
+            generated_files.append("atropos_processed.nii.gz")
+
+            report_items.append({
+                "header": "Tissue Segmentation",
+                "image": "segmentation.png",
+                "source_image": img_seg["segmentation"],
+                "description": "ANTs Atropos tissue segmentation",
+            })
+
+            # --- Cortical Thickness ---
+            if "do_thickness" in self.inputs.perform_steps:
+                logger.info("Running cortical thickness estimation")
+                thickimg = ants.kelly_kapowski(
+                    s=img_seg["segmentation"],
+                    g=img_seg["probabilityimages"][1],
+                    w=img_seg["probabilityimages"][2],
+                    its=45, r=0.5, m=1
+                )
+
+                thickimg.to_filename("thickness_processed.nii.gz")
+                generated_files.append("thickness_processed.nii.gz")
+
+                report_items.append({
+                    "header": "Cortical Thickness",
+                    "image": "thickness.png",
+                    "overlay": thickimg,
+                    "base_image": img,
+                    "description": "Cortical thickness estimation",
+                })
+
+        # --- Registration ---
+        if "do_registration" in self.inputs.perform_steps:
+            logger.info("Running image registration")
+            fixed = ants.image_read(fname1)
+            moving = ants.image_read(fname2)
+
+            tx = ants.registration(
+                fixed=fixed,
+                moving=moving,
+                type_of_transform="SyN"
+            )
+
+            warped = tx["warpedmovout"]
+            warped.to_filename("warped.nii.gz")
+            generated_files.append("warped.nii.gz")
+
+            report_items.append({
+                "header": "Image Registration",
+                "image": "registration.png",
+                "overlay": warped,
+                "base_image": fixed,
+                "description": "ANTs nonlinear registration result",
+            })
+
+        # ============================================================
+        # REPORTING PHASE (ALL PLOTTING + BODY_TEMPLATE)
+        # ============================================================
+        logger.info("Generating report content")
+
+        body_content = ""
+
+        for item in report_items:
+            if "overlay" in item:
+                item["base_image"].plot(
+                    overlay=item["overlay"],
+                    overlay_cmap="jet",
+                    filename=item["image"]
+                )
+            else:
+                ants.plot(item["source_image"], filename=item["image"])
+
+            generated_files.append(item["image"])  # to upload later!
+
+            body_content += BODY_TEMPLATE.format(
+                header=item["header"],
+                src_image=item["image"],
+                image_description=item["description"],
+                image_caption=item["description"],
+            )
+
+        report_file = None
+        if body_content:
+            report_file = "online_report.html"
+            with open(report_file, "w") as f:
+                f.write(HTML_TEMPLATE.format(body=body_content))
+
+            generated_files.append(report_file)
+
+        # ============================================================
+        # UPLOADING PHASE
+        # ============================================================
+        logger.info("Uploading outputs to QMENTA Platform")
+
+        # Upload original input image for reference
         context.upload_file(
-            source_file_path=fname1, 
+            source_file_path=fname1,
             destination_path="input_image.nii.gz",
             modality=fname1_handler.get_file_modality(),
             tags=fname1_handler.get_file_tags(),
         )
-        original_png_image = "original.png"
 
-        ants.plot(fname1, filename=original_png_image)
-        context.upload_file(
-            original_png_image, 
-            original_png_image,
-        )
+        # Upload all generated outputs
+        for filename in generated_files:
+            context.upload_file(filename, filename)
 
-        img = ants.image_read(fname1)
-        logger.info(img)
-
-        logger.info("Operations:\n"
-            f"- Median: {img.median()}\n"
-            f"- STD: {img.std()}\n"
-            f"- Arg. Min: {img.argmin()}\n"
-            f"- Arg. Max: {img.argmax()}\n"
-            f"- Flatten: {img.flatten()[:10]}\n"
-            f"- Non-zero: {img.nonzero()[:10]}\n"
-            f"- Unique: {img.unique()[:10]}\n"
-        )
-
-        # do any operations directly on ANTsImage types
-        img_arr = img.numpy()
-        img2 = img.new_image_like(img_arr*2)
-        # do any operations directly on ANTsImage types
-        img3 = img2 - img
-        img3 = img2 > img
-        img3 = img2 / img
-        img3 = img2 == img
-
-        # change any physical properties
-        img4 = img.clone()
-        print(img4.spacing)
-        img4.set_spacing((1,1))
-        print(img4.spacing)
-
-        # test if two images are allclose in values
-        issame = ants.allclose(img,img2)
-        logger.info(f"two images are allclose in values? : {issame}")
-        # test if two images have same physical space
-        issame_phys = ants.image_physical_space_consistency(img,img2)
-        logger.info(f"two images have same physical space : {issame_phys}")
-
-        body_content = ""
-        logger.info("Performing steps: {}".format('\n'.join(self.inputs.perform_steps)))
-
-        if "do_biasfieldcorrection" in self.inputs.perform_steps:
-            logger.info("Started N4 bias field correction")
-            image = ants.image_read(fname1)
-            image_n4 = ants.n4_bias_field_correction(image)
-            # save to filename
-            image_n4.to_filename("n4_processed.nii.gz")
-
-            context.upload_file(
-                "n4_processed.nii.gz", 
-                "n4_processed.nii.gz"
-            )
-            
-            png_image = "n4_bias.png"
-            ants.plot(image_n4, filename=png_image)
-            context.upload_file(png_image, png_image)
-            body_content += BODY_TEMPLATE.format(
-                header="N4 Bias Field Correction",
-                src_image=png_image,
-                image_description=f"Output of the n4 bias field correction for {os.path.basename(fname1)}",
-                image_caption=f"Output of the n4 bias field correction for {os.path.basename(fname1)}",
-            )
-
-        if "do_thickness" in self.inputs.perform_steps:
-            self.inputs.perform_steps.append("do_segmentation")
-
-        if "do_segmentation" in self.inputs.perform_steps:
-            logger.info("Started segmentation")
-            img = ants.image_read(fname1)
-            mask = ants.get_mask(img)
-            img_seg = ants.atropos(
-                a=img, m=self.inputs.mrf, c='[2,0]', i='kmeans[3]', x=mask
-            )
-            # save to filename
-            img_seg["segmentation"].to_filename("atropos_processed.nii.gz")
-
-            logger.info(f"segmentation file keys from atropos : {img_seg.keys()}")
-            context.upload_file(
-                "atropos_processed.nii.gz", 
-                "atropos_processed.nii.gz"
-            )
-
-            png_image = "segmentation.png"
-            ants.plot(img_seg['segmentation'], filename=png_image)
-            context.upload_file(png_image, png_image)
-            body_content += BODY_TEMPLATE.format(
-                header="Tissue segmentation",
-                src_image=png_image,
-                image_description=f"Output of ANTs Atropos for {os.path.basename(fname1)}",
-                image_caption=f"Output of ANTs Atropos for {os.path.basename(fname1)}",
-            )
-
-            if "do_thickness" in self.inputs.perform_steps:
-                logger.info("Started thickness")
-                img = ants.image_read(fname1)
-                print(self.inputs.mrf)
-                mask = ants.get_mask(img).threshold_image(1, 2)
-
-                thickimg = ants.kelly_kapowski(
-                    s=img_seg['segmentation'], 
-                    g=img_seg['probabilityimages'][1],
-                    w=img_seg['probabilityimages'][2], 
-                    its=45, r=0.5, m=1
-                )            
-                logger.info(f"thickness image : {thickimg}")
-                thickimg.to_filename("thickness_processed.nii.gz")
-                context.upload_file(
-                    "thickness_processed.nii.gz",
-                    "thickness_processed.nii.gz"
-                )
-
-                png_image = "thickness.png"
-                img.plot(overlay=thickimg, overlay_cmap='jet', filename=png_image)
-                context.upload_file(png_image, png_image)
-                body_content += BODY_TEMPLATE.format(
-                    header="Cortical thickness",
-                    src_image=png_image,
-                    image_description=f"Output of ANTs Kelly Kapowski for {os.path.basename(fname1)}",
-                    image_caption=f"Output of ANTs Kelly Kapowski for {os.path.basename(fname1)}",
-                )
-        
-        if "do_registration" in self.inputs.perform_steps:
-            logger.info("Started registration")
-            fname2_handler = self.inputs.input_images.c_image2[0]
-            fname2 = fname2_handler.file_path
-            fixed = ants.image_read(fname1)
-            moving = ants.image_read(fname2)
-            mytx = ants.registration(fixed=fixed, moving=moving, type_of_transform='SyN')
-            logger.info("Finished registration")
-            logger.info(mytx)
-            warped_moving = mytx['warpedmovout'].to_filename("warped.nii.gz")
-            context.upload_file(
-                "warped.nii.gz", 
-                "warped.nii.gz"
-            )
-            png_image = "registration.png"
-            fixed.plot(overlay=warped_moving, title='After Registration', filename=png_image)
-            context.upload_file(png_image, png_image)
-            body_content += BODY_TEMPLATE.format(
-                header="Registration step",
-                src_image=png_image,
-                image_description=f"Output of ANTs Registration for {os.path.basename(fname1)}",
-                image_caption=f"Output of ANTs Registration for {os.path.basename(fname1)}",
-            )
-        
-        if body_content:
-            report_output = "online_report.html"
-            with open(report_output, "w") as f1:
-                f1.write(HTML_TEMPLATE.format(body=body_content))
-            context.upload_file(report_output, report_output)
+        context.set_progress(value=100, message="Processing completed")
+        logger.info("Tool execution finished successfully")
 
     def tool_outputs(self):
         # Main object to create the results configuration object.
