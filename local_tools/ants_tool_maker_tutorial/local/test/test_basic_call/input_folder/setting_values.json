@@ -5,17 +5,11 @@
     {
       "path": "data_r16.nii.gz",
       "modality": "T1",
-      "tags": [
-        "r16"
-      ],
       "file_filter_condition_name": "c_image1"
     },
     {
       "path": "data_r64.nii.gz",
       "modality": "T1",
-      "tags": [
-        "r64"
-      ],
       "file_filter_condition_name": "c_image2"
     }
   ],

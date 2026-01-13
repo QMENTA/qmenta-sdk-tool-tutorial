@@ -29,14 +29,12 @@ class TestTool(unittest.TestCase):
                             path="data_r16.nii.gz",
                             file_filter_condition_name="c_image1",
                             modality=Modality.T1,
-                            tags=[Tag("r16")],
                             mandatory=1
                         ),
                         TestFileInput(
                             path="data_r64.nii.gz",
                             file_filter_condition_name="c_image2",
                             modality=Modality.T1,
-                            tags=[Tag("r64")],
                             mandatory=1
                         )
                     ],
