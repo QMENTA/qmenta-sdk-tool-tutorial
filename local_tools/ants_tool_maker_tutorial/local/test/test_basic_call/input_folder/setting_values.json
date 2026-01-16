@@ -1,0 +1,21 @@
+{
+  "test_name": "test_basic_call",
+  "sample_data_folder": "sample_data",
+  "input_images": [
+    {
+      "path": "data_r16.nii.gz",
+      "modality": "T1",
+      "file_filter_condition_name": "c_image1"
+    },
+    {
+      "path": "data_r64.nii.gz",
+      "modality": "T1",
+      "file_filter_condition_name": "c_image2"
+    }
+  ],
+  "perform_steps": [
+    "do_registration",
+    "do_biasfieldcorrection",
+    "do_thickness"
+  ]
+}

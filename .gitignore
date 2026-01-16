@@ -11,3 +11,12 @@ data/output/**
 # Python artifacts
 __pycache__
 
+# virtual env
+.venv/
+
+# sample data folder
+**/local/test/sample_data
+**/local/tool.py
+**/local/Dockerfile
+**/local/requirements.txt
+**/local/test/test_*

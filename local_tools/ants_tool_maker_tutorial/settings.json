@@ -1,0 +1,61 @@
+[
+  {
+    "id": "input_images",
+    "type": "container",
+    "file_filter": "(c_image1[1,1](((m'T1'|m'T2'),r'.*r16.*\\.nii\\.gz')) AND c_image2[1,1](((m'T1'|m'T2'),r'.*r16.*\\.nii\\.gz')))",
+    "title": "Oncology medical image",
+    "info": "<h2>ANTsPY Tutorial</h2>Required inputs:<br><b>&bull; Anatomical brain medical image</b>: 2D image to analyze<br>&ensp;Accepted modalities: 'T1', 'T2'<br>&ensp;Two files with different tags: 'r16' and 'r64'",
+    "in_filter": [
+      "mri_brain_data"
+    ],
+    "out_filter": [],
+    "anchor": 1,
+    "batch": 1,
+    "mandatory": 1
+  },
+  {
+    "type": "line"
+  },
+  {
+    "type": "heading",
+    "content": "PyANTs tool can perform the following steps:"
+  },
+  {
+    "id": "perform_steps",
+    "type": "multiple_choice",
+    "title": "Which step/s do you want to execute?",
+    "options": [
+      [
+        "do_biasfieldcorrection",
+        "Perform Bias Field Correction"
+      ],
+      [
+        "do_segmentation",
+        "Perform tissue segmentation"
+      ],
+      [
+        "do_thickness",
+        "Perform cortical thickness"
+      ],
+      [
+        "do_registration",
+        "ANTs registration interface"
+      ]
+    ],
+    "default": [
+      "do_biasfieldcorrection",
+      "do_segmentation",
+      "do_thickness",
+      "do_registration"
+    ]
+  },
+  {
+    "type": "line"
+  },
+  {
+    "id": "mrf",
+    "type": "string",
+    "title": "'mrf' parameters as a string, usually \"[smoothingFactor,radius]\" where smoothingFactor determines the amount of smoothing and radius determines the MRF neighborhood, as an ANTs style neighborhood vector eg \"1x1\" for a 2D image.",
+    "default": "[0.2, 1x1]"
+  }
+]

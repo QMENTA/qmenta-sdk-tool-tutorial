@@ -1,0 +1,2 @@
+antspyx==0.6.1
+qmenta-sdk-lib==2.0
