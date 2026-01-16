@@ -13,7 +13,7 @@ including Docker and the [QMENTA platform](https://client.qmenta.com/#/login).
 
 ### ANTs example
 
-As a case study, the tutorial goes partially over the [ANTs Tutorial](https://github.com/ANTsX/ANTsPy/blob/master/tutorials/10minTutorial.ipynb)
+The tutorial goes partially over the [ANTs Tutorial](https://github.com/ANTsX/ANTsPy/blob/master/tutorials/10minTutorial.ipynb)
 implementation, originally implemented as a Python notebook, into a QMENTA tool. 
 The implementation will allow the user to select which processing steps to perform and also select a
 variety of parameters for segmenting the images. The example will use a pair of T1-weighted MRI brain slices as input data. The tool will expose
@@ -23,7 +23,7 @@ to execute:
 * Perform bias field correction
 * Run tissue segmentation
 * Compute cortical thickness
-* Register two images using
+* Register two images using non-linear registration
 
 The tissue segmentation step must be executed before cortical thickness estimation, 
 as the latter depends on the segmentation results. For this reason, these two steps are linked within the workflow. 
