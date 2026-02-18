@@ -68,7 +68,7 @@ class QmentaSDKToolMakerTutorial(Tool):
                     file_filter_condition_name="c_image2",
                     filter_file=FilterFile(
                         modality=[Modality.T1, Modality.T2],
-                        regex=".*r16.*\\.nii\\.gz",
+                        regex=".*r64.*\\.nii\\.gz",
                     ),
                     mandatory=1,
                     min_files=1,
