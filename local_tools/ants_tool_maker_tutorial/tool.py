@@ -48,7 +48,7 @@ class QmentaSDKToolMakerTutorial(Tool):
         self.add_input_container(
             title="Oncology medical image",
             info="<h2>ANTsPY Tutorial</h2>Required inputs:<br><b>&bull; Anatomical brain medical image</b>: " \
-            "2D image to analyze<br>&ensp;Accepted modalities: 'T1', 'T2'<br>&ensp;Two files with different tags: 'r16' and 'r64'",  # text in case we want to show which modalities are accepted by the filter.
+            "2D image to analyze<br>&ensp;Accepted modalities: 'T1', 'T2'<br>&ensp;Two files with different filename content: 'r16' and 'r64'",  # text in case we want to show which modalities are accepted by the filter.
             anchor=1,
             batch=1,
             container_id="input_images",

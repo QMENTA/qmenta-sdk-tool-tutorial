@@ -4,7 +4,7 @@
     "type": "container",
     "file_filter": "(c_image1[1,1](((m'T1'|m'T2'),r'.*r16.*\\.nii\\.gz')) AND c_image2[1,1](((m'T1'|m'T2'),r'.*r64.*\\.nii\\.gz')))",
     "title": "Oncology medical image",
-    "info": "<h2>ANTsPY Tutorial</h2>Required inputs:<br><b>&bull; Anatomical brain medical image</b>: 2D image to analyze<br>&ensp;Accepted modalities: 'T1', 'T2'<br>&ensp;Two files with different tags: 'r16' and 'r64'",
+    "info": "<h2>ANTsPY Tutorial</h2>Required inputs:<br><b>&bull; Anatomical brain medical image</b>: 2D image to analyze<br>&ensp;Accepted modalities: 'T1', 'T2'<br>&ensp;Two files with different filename content: 'r16' and 'r64'",
     "in_filter": [
       "mri_brain_data"
     ],
